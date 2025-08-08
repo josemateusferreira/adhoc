@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Edição - SISU</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Cadastro de Edição SISU</h1>
+    <form action="/app/edicao/{{'update?id='~edicao.id if edicao.id else 'create' }}" method="post">
+        <p class="text-danger">{{error}}</p>
+        <div class="form-group">
+            <label>Nome
+                <input type="text" class="form-control" name="nome" placeholder="Nome da edição" value="{{edicao.nome}}">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Ano
+                <input type="number" class="form-control" name="ano" placeholder="Ano" value="{{edicao.ano}}">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Semestre
+                <input type="number" class="form-control" name="semestre" placeholder="Semestre" value="{{edicao.semestre}}">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Data Início
+                <input type="date" class="form-control" name="data_inicio" value="{{edicao.data_inicio}}">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Data Fim
+                <input type="date" class="form-control" name="data_fim" value="{{edicao.data_fim}}">
+            </label>
+        </div>
+        <input type="submit" value="Enviar" class="btn btn-primary">
+    </form>
+</div>
+</body>
+</html>
