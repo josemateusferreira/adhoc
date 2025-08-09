@@ -17,6 +17,33 @@
             <p class="card-text">Data Início: {{edicao.data_inicio}}<br>Data Fim: {{edicao.data_fim}}</p>
         </div>
     </div>
+    <h2 class="mt-5">Cursos e Vagas</h2>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Curso</th>
+                <th>Vagas AC</th>
+                <th>Vagas Deficientes</th>
+                <th>Vagas PPI BR</th>
+                <th>Vagas PPI Pública</th>
+                <th>Vagas Pública</th>
+                <th>Vagas Pública BR</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ec in edicao_cursos %}
+            <tr>
+                <td>{{ ec.curso.nome if ec.curso else 'N/A' }}</td>
+                <td>{{ ec.vagas_ac }}</td>
+                <td>{{ ec.vagas_deficientes }}</td>
+                <td>{{ ec.vagas_ppi_br }}</td>
+                <td>{{ ec.vagas_ppi_publica }}</td>
+                <td>{{ ec.vagas_publica }}</td>
+                <td>{{ ec.vagas_publica_br }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
     <a href="/app/edicao/index" class="btn btn-secondary mt-4">Voltar</a>
 </div>
 <!-- Bootstrap JS -->

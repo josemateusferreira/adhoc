@@ -5,38 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Edição - SISU</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script>
+        function toggleVagas(index) {
+            var vagasDiv = document.getElementById('vagas-' + index);
+            vagasDiv.style.display = vagasDiv.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 </head>
 <body>
 <div class="container">
     <h1>Cadastro de Edição SISU</h1>
-    <form action="/app/edicao/{{'update?id='~edicao.id if edicao.id else 'create' }}" method="post">
+    <form action="/app/edicao/create{% if edicao.id %}?id={{ edicao.id }}{% endif %}" method="post">
         <p class="text-danger">{{error}}</p>
         <div class="form-group">
             <label>Nome
-                <input type="text" class="form-control" name="nome" placeholder="Nome da edição" value="{{edicao.nome}}">
+                    <input type="text" class="form-control" name="nome_edicao" placeholder="Nome da edição" value="{{edicao.nome}}">
             </label>
         </div>
         <div class="form-group">
             <label>Ano
-                <input type="number" class="form-control" name="ano" placeholder="Ano" value="{{edicao.ano}}">
+                    <input type="number" class="form-control" name="ano_edicao" placeholder="Ano" value="{{edicao.ano}}">
             </label>
         </div>
         <div class="form-group">
             <label>Semestre
-                <input type="number" class="form-control" name="semestre" placeholder="Semestre" value="{{edicao.semestre}}">
+                    <input type="number" class="form-control" name="semestre_edicao" placeholder="Semestre" value="{{edicao.semestre}}">
             </label>
         </div>
         <div class="form-group">
             <label>Data Início
-                <input type="date" class="form-control" name="data_inicio" value="{{edicao.data_inicio}}">
+                    <input type="date" class="form-control" name="data_inicio_edicao" value="{{edicao.data_inicio}}">
             </label>
         </div>
         <div class="form-group">
             <label>Data Fim
-                <input type="date" class="form-control" name="data_fim" value="{{edicao.data_fim}}">
+                    <input type="date" class="form-control" name="data_fim_edicao" value="{{edicao.data_fim}}">
             </label>
         </div>
-        <input type="submit" value="Enviar" class="btn btn-primary">
+        <hr>
+        <h3>Cursos</h3>
+        {% for curso in cursos %}
+        <div class="form-group border p-3 mb-3">
+            <div class="d-flex align-items-center">
+                <strong>{{curso.nome}}</strong>
+                <button type="button" class="btn btn-info btn-sm ms-3" onclick="toggleVagas({{loop.index0}})">+</button>
+            </div>
+            <div id="vagas-{{loop.index0}}" style="display:none; margin-top:10px;">
+                {% set ec = (edicao_cursos | selectattr('curso_id', 'equalto', curso.id) | list | first) %}
+                <input type="hidden" name="cursos[{{loop.index0}}][curso_id]" value="{{curso.id}}">
+                <input type="number" name="cursos[{{loop.index0}}][vagas_ac]" placeholder="Vagas AC" class="form-control mb-1" value="{{ ec.vagas_ac if ec else '' }}">
+                <input type="number" name="cursos[{{loop.index0}}][vagas_ppi_br]" placeholder="Vagas PPI BR" class="form-control mb-1" value="{{ ec.vagas_ppi_br if ec else '' }}">
+                <input type="number" name="cursos[{{loop.index0}}][vagas_publica_br]" placeholder="Vagas Pública BR" class="form-control mb-1" value="{{ ec.vagas_publica_br if ec else '' }}">
+                <input type="number" name="cursos[{{loop.index0}}][vagas_ppi_publica]" placeholder="Vagas PPI Pública" class="form-control mb-1" value="{{ ec.vagas_ppi_publica if ec else '' }}">
+                <input type="number" name="cursos[{{loop.index0}}][vagas_publica]" placeholder="Vagas Pública" class="form-control mb-1" value="{{ ec.vagas_publica if ec else '' }}">
+                <input type="number" name="cursos[{{loop.index0}}][vagas_deficientes]" placeholder="Vagas Deficientes" class="form-control mb-1" value="{{ ec.vagas_deficientes if ec else '' }}">
+            </div>
+        </div>
+        {% endfor %}
+        <input type="submit" value="Enviar" class="btn btn-primary mt-3">
     </form>
 </div>
 </body>
