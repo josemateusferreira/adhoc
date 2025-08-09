@@ -5,11 +5,12 @@ from orator import DatabaseManager, Model
 import os
 from session import get_session
 
+
 def app(environ, start_response):
     path = environ['PATH_INFO']
     param = parse_qs(environ['QUERY_STRING'])
-    session_id,session = get_session(environ)
-    environ['session']= session
+    session_id, session = get_session(environ)
+    environ['session'] = session
 
     path_array = path.split('/')
     # Se for página inicial, redireciona para MenuController
@@ -18,19 +19,21 @@ def app(environ, start_response):
         action = 'index'
     else:
         classname = path_array[2].capitalize() + 'Controller'
-        action = path_array[3] if len(path_array) > 3 and path_array[3] else 'index'
+        action = path_array[3] if len(
+            path_array) > 3 and path_array[3] else 'index'
 
-    module = importlib.import_module("controllers."+ classname)
-    instance= getattr(module, classname)(environ)
+    module = importlib.import_module("controllers." + classname)
+    instance = getattr(module, classname)(environ)
     getattr(instance, action)(*param.values())
 
     start_response(instance.status, [
         ("Content-Type", "text/html"),
         ("location", instance.redirect_url),
-        ("Set-Cookie",f"session_id={session_id}; Path=/"),
+        ("Set-Cookie", f"session_id={session_id}; Path=/"),
         ("Content-Length", str(len(instance.data)))
     ])
     return [instance.data.encode()]
+
 
 if __name__ == '__main__':
     config = {
