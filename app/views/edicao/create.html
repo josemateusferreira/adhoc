@@ -18,20 +18,37 @@
     <form action="/app/edicao/create{% if edicao.id %}?id={{ edicao.id }}{% endif %}" method="post">
         <p class="text-danger">{{error}}</p>
         <div class="form-group">
-            <label>Nome
-                    <input type="text" class="form-control" name="nome_edicao" placeholder="Nome da edição" value="{{edicao.nome}}">
-            </label>
-        </div>
-        <div class="form-group">
             <label>Ano
-                    <input type="number" class="form-control" name="ano_edicao" placeholder="Ano" value="{{edicao.ano}}">
+                <select class="form-control" name="ano_edicao" id="ano_edicao" required>
+                    {% for a in range(2025, 2036) %}
+                        <option value="{{a}}" {% if edicao.ano == a %}selected{% endif %}>{{a}}</option>
+                    {% endfor %}
+                </select>
             </label>
         </div>
         <div class="form-group">
             <label>Semestre
-                    <input type="number" class="form-control" name="semestre_edicao" placeholder="Semestre" value="{{edicao.semestre}}">
+                <select class="form-control" name="semestre_edicao" id="semestre_edicao" required>
+                    <option value="1" {% if edicao.semestre == 1 %}selected{% endif %}>1</option>
+                    <option value="2" {% if edicao.semestre == 2 %}selected{% endif %}>2</option>
+                </select>
             </label>
         </div>
+        <div class="form-group">
+            <label>Nome do SISU (gerado automaticamente)
+                <input type="text" class="form-control" name="nome_edicao" id="nome_edicao" value="{{edicao.nome}}" readonly>
+            </label>
+        </div>
+        <script>
+            function atualizarNomeSISU() {
+                var ano = document.getElementById('ano_edicao').value;
+                var semestre = document.getElementById('semestre_edicao').value;
+                document.getElementById('nome_edicao').value = ano + '.' + semestre;
+            }
+            document.getElementById('ano_edicao').addEventListener('change', atualizarNomeSISU);
+            document.getElementById('semestre_edicao').addEventListener('change', atualizarNomeSISU);
+            window.onload = atualizarNomeSISU;
+        </script>
         <div class="form-group">
             <label>Data Início
                     <input type="date" class="form-control" name="data_inicio_edicao" value="{{edicao.data_inicio}}">
@@ -62,7 +79,8 @@
             </div>
         </div>
         {% endfor %}
-        <input type="submit" value="Enviar" class="btn btn-primary mt-3">
+    <input type="submit" value="Enviar" class="btn btn-primary mt-3">
+    <a href="/app/edicao/index" class="btn btn-secondary mt-3 ms-2">Voltar</a>
     </form>
 </div>
 </body>

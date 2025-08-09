@@ -12,11 +12,17 @@ def app(environ, start_response):
     environ['session']= session
 
     path_array = path.split('/')
-    classname = path_array[2].capitalize() + 'Controller'
+    # Se for página inicial, redireciona para MenuController
+    if path == '/' or (len(path_array) > 2 and path_array[2] == ''):
+        classname = 'MenuController'
+        action = 'index'
+    else:
+        classname = path_array[2].capitalize() + 'Controller'
+        action = path_array[3] if len(path_array) > 3 and path_array[3] else 'index'
 
     module = importlib.import_module("controllers."+ classname)
     instance= getattr(module, classname)(environ)
-    getattr(instance, path_array[3] or 'index')(*param.values())
+    getattr(instance, action)(*param.values())
 
     start_response(instance.status, [
         ("Content-Type", "text/html"),

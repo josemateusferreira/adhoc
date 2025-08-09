@@ -22,18 +22,18 @@
 			</tr>
 		</thead>
 		<tbody>
-		{% for edicao in edicoes %}
+		{% for item in edicoes_detalhe %}
 			<tr>
-				<td>{{ edicao.id }}</td>
-				<td>{{ edicao.nome }}</td>
-				<td>{{ edicao.ano }}</td>
-				<td>{{ edicao.semestre }}</td>
-				<td>{{ edicao.data_inicio }}</td>
-				<td>{{ edicao.data_fim }}</td>
+				<td>{{ item.edicao.id }}</td>
+				<td>{{ item.edicao.nome }}</td>
+				<td>{{ item.edicao.ano }}</td>
+				<td>{{ item.edicao.semestre }}</td>
+				<td>{{ item.edicao.data_inicio }}</td>
+				<td>{{ item.edicao.data_fim }}</td>
 				<td>
-					<a href="/app/edicao/view?id={{ edicao.id }}" class="btn btn-primary btn-sm">Detalhes</a>
-					<a href="/app/edicao/create?id={{ edicao.id }}" class="btn btn-warning btn-sm ms-1">Editar</a>
-					<form action="/app/edicao/delete?id={{ edicao.id }}" method="post" style="display:inline;">
+					<a href="/app/edicao/view?id={{ item.edicao.id }}" class="btn btn-primary btn-sm">Detalhes</a>
+					<a href="/app/edicao/create?id={{ item.edicao.id }}" class="btn btn-warning btn-sm ms-1">Editar</a>
+					<form action="/app/edicao/delete?id={{ item.edicao.id }}" method="post" style="display:inline;">
 						<button type="submit" class="btn btn-danger btn-sm ms-1" onclick="return confirm('Tem certeza que deseja excluir esta edição?');">Excluir</button>
 					</form>
 				</td>

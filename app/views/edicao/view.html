@@ -23,11 +23,11 @@
             <tr>
                 <th>Curso</th>
                 <th>Vagas AC</th>
-                <th>Vagas Deficientes</th>
                 <th>Vagas PPI BR</th>
+                <th>Vagas Pública BR</th>
                 <th>Vagas PPI Pública</th>
                 <th>Vagas Pública</th>
-                <th>Vagas Pública BR</th>
+                <th>Vagas Deficientes</th>
             </tr>
         </thead>
         <tbody>
@@ -35,12 +35,14 @@
             <tr>
                 <td>{{ ec.curso.nome if ec.curso else 'N/A' }}</td>
                 <td>{{ ec.vagas_ac }}</td>
-                <td>{{ ec.vagas_deficientes }}</td>
                 <td>{{ ec.vagas_ppi_br }}</td>
+                <td>{{ ec.vagas_publica_br }}</td>
                 <td>{{ ec.vagas_ppi_publica }}</td>
                 <td>{{ ec.vagas_publica }}</td>
-                <td>{{ ec.vagas_publica_br }}</td>
+                <td>{{ ec.vagas_deficientes }}</td>
             </tr>
+        {% else %}
+            <tr><td colspan="7" class="text-center">Nenhum curso cadastrado para esta edição.</td></tr>
         {% endfor %}
         </tbody>
     </table>
