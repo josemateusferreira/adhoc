@@ -17,11 +17,17 @@ class CandidatoController(Controller):
         cursos = Curso.all()
         self.data = template.render(candidato=candidato, cursos=cursos)
 
-    def view(self, id):
+    def view(self, id, origem=None):
         candidato = Candidato.find(id[0])
+        from urllib.parse import parse_qs
+        qs = parse_qs(self.environ.get('QUERY_STRING', ''))
+        if origem is None:
+            origem = qs.get('origem', ['candidato'])[0]
+        if origem not in ('candidato', 'edicao'):
+            origem = 'candidato'
         if candidato:
             template = self.env.get_template("view.html")
-            self.data = template.render(candidato=candidato)
+            self.data = template.render(candidato=candidato, origem=origem)
         else:
             self.notFound()
 
@@ -49,11 +55,11 @@ class CandidatoController(Controller):
         else:
             self.notFound()
 
-    def index(self):
+    def index(self, origem=None):
         edicoes = Edicao.all()
         message = ""
         if 'flash' in self.session:
             message = self.session['flash']
             self.session['flash'] = ""
         template = self.env.get_template("index.html")
-        self.data = template.render(edicoes=edicoes, message=message)
+        self.data = template.render(edicoes=edicoes, message=message, origem=origem)

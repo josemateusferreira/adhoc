@@ -32,7 +32,7 @@
                 <td>{{ edicao.data_fim }}</td>
                 <td>
                     <a href="/app/candidato/create?edicao_id={{ edicao.id }}" class="btn btn-primary btn-sm">Inscrever-se</a>
-                    <a href="/app/edicao/view?id={{ edicao.id }}&origem=candidato" class="btn btn-info btn-sm ms-1">Ver detalhes</a>
+                    <a href="/app/edicao/view?id={{ edicao.id }}&origem={{ origem if origem else 'candidato' }}" class="btn btn-info btn-sm ms-1">Ver detalhes</a>
 
                 </td>
             </tr>

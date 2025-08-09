@@ -1,4 +1,3 @@
-
 import os
 from controllers.Controller import Controller
 from models.Edicao import Edicao, EdicaoCurso
@@ -17,7 +16,7 @@ class EdicaoController(Controller):
             edicao.delete()
         self.redirectPage('index')
 
-    def index(self):
+    def index(self, origem=None):
         template = self.env.get_template("index.html")
         edicoes = Edicao.all()
         # Monta estrutura mestre-detalhe: cada edição com seus cursos/vagas
@@ -28,15 +27,19 @@ class EdicaoController(Controller):
                 'edicao': edicao,
                 'cursos': edicao_cursos
             })
-        self.data = template.render(edicoes_detalhe=edicoes_detalhe)
+        self.data = template.render(edicoes_detalhe=edicoes_detalhe, origem=origem)
 
     def view(self, id=None, origem=None):
         template = self.env.get_template("view.html")
         edicao = Edicao.find(id)
         edicao_cursos = EdicaoCurso.where('edicao_id', id).get()
-        # Define a URL de origem para o botão voltar
+        # Captura origem da query string se não vier por parâmetro
+        from urllib.parse import parse_qs
         qs = parse_qs(self.environ.get('QUERY_STRING', ''))
-        origem = qs.get('origem', ['edicao'])[0]  # 'edicao' por padrão
+        # Se origem vier na query string, prioriza ela
+        origem_qs = qs.get('origem', [None])[0]
+        if origem_qs:
+            origem = origem_qs
         if origem not in ('edicao', 'candidato'):
             origem = 'edicao'
         self.data = template.render(edicao=edicao, edicao_cursos=edicao_cursos, origem=origem)
