@@ -1,3 +1,4 @@
+
 import os
 from controllers.Controller import Controller
 from models.Edicao import Edicao, EdicaoCurso
@@ -5,6 +6,7 @@ from models.Curso import Curso
 from jinja2 import Environment, FileSystemLoader
 import cgi
 import sys
+from urllib.parse import parse_qs
 sys.path.append('./app')
 
 
@@ -28,13 +30,16 @@ class EdicaoController(Controller):
             })
         self.data = template.render(edicoes_detalhe=edicoes_detalhe)
 
-    def view(self, id=None):
+    def view(self, id=None, origem=None):
         template = self.env.get_template("view.html")
         edicao = Edicao.find(id)
-        import sys
-        sys.stderr.write(f"[DEBUG] Dados da edição: {edicao}\n")
         edicao_cursos = EdicaoCurso.where('edicao_id', id).get()
-        self.data = template.render(edicao=edicao, edicao_cursos=edicao_cursos)
+        # Define a URL de origem para o botão voltar
+        qs = parse_qs(self.environ.get('QUERY_STRING', ''))
+        origem = qs.get('origem', ['edicao'])[0]  # 'edicao' por padrão
+        if origem not in ('edicao', 'candidato'):
+            origem = 'edicao'
+        self.data = template.render(edicao=edicao, edicao_cursos=edicao_cursos, origem=origem)
 
     def create(self, id=None):
         method = self.environ["REQUEST_METHOD"]
@@ -91,7 +96,8 @@ class EdicaoController(Controller):
                             'vagas_deficientes': curso.get('vagas_deficientes', 0)
                         })
                         edicao_curso.save()
-                    self.redirectPage('view', {'id': edicao.id})
+                    self.redirectPage('view', {'id': edicao.id, 'origem': 'edicao'})
+
 
         self.data = template.render(
             edicao=edicao, error=error_msg, cursos=cursos, edicao_cursos=edicao_cursos)
