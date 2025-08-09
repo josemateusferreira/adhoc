@@ -32,7 +32,7 @@
 				<td>{{ edicao.data_inicio }}</td>
 				<td>{{ edicao.data_fim }}</td>
 				<td>
-					   <a href="/app/edicao/view?id={{ edicao.id }}&origem={{ origem if origem else 'edicao' }}" class="btn btn-info btn-sm ms-1">Ver detalhes</a>
+					   <a href="/app/edicao/view?id={{ edicao.id }}" class="btn btn-info btn-sm ms-1">Ver detalhes</a>
 
 					<a href="/app/edicao/create?id={{ edicao.id }}" class="btn btn-warning btn-sm ms-1">Editar</a>
 					<form action="/app/edicao/delete?id={{ edicao.id }}" method="post" style="display:inline;">

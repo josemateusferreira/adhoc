@@ -27,22 +27,35 @@ class EdicaoController(Controller):
                 'edicao': edicao,
                 'cursos': edicao_cursos
             })
-        self.data = template.render(edicoes_detalhe=edicoes_detalhe, origem=origem)
+        self.data = template.render(
+            edicoes_detalhe=edicoes_detalhe, origem=origem)
 
     def view(self, id=None, origem=None):
         template = self.env.get_template("view.html")
         edicao = Edicao.find(id)
         edicao_cursos = EdicaoCurso.where('edicao_id', id).get()
+        from models.Candidato import Candidato
+        from models.Curso import Curso
         # Captura origem da query string se não vier por parâmetro
         from urllib.parse import parse_qs
         qs = parse_qs(self.environ.get('QUERY_STRING', ''))
-        # Se origem vier na query string, prioriza ela
         origem_qs = qs.get('origem', [None])[0]
         if origem_qs:
             origem = origem_qs
         if origem not in ('edicao', 'candidato'):
             origem = 'edicao'
-        self.data = template.render(edicao=edicao, edicao_cursos=edicao_cursos, origem=origem)
+        # Busca candidatos inscritos apenas nesta edição
+        candidatos = []
+        for edicao_curso in edicao_cursos:
+            for candidato in Candidato.where('edicao_curso_id', edicao_curso.id).get():
+                curso = edicao_curso.curso
+                candidatos.append({
+                    'nome': candidato.nome,
+                    'categoria': candidato.categoria,
+                    'curso_nome': curso.nome if curso else 'N/A'
+                })
+        self.data = template.render(
+            edicao=edicao, edicao_cursos=edicao_cursos, origem=origem, candidatos=candidatos)
 
     def create(self, id=None):
         method = self.environ["REQUEST_METHOD"]
@@ -99,8 +112,8 @@ class EdicaoController(Controller):
                             'vagas_deficientes': curso.get('vagas_deficientes', 0)
                         })
                         edicao_curso.save()
-                    self.redirectPage('view', {'id': edicao.id, 'origem': 'edicao'})
-
+                    self.redirectPage(
+                        'view', {'id': edicao.id, 'origem': 'edicao'})
 
         self.data = template.render(
             edicao=edicao, error=error_msg, cursos=cursos, edicao_cursos=edicao_cursos)

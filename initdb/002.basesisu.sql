@@ -33,6 +33,6 @@ CREATE TABLE IF NOT EXISTS public.candidato (
     cpf TEXT NOT NULL UNIQUE,
     data_nascimento DATE,
     categoria TEXT,
-    curso_id INTEGER REFERENCES curso(id),
+    edicao_curso_id INTEGER REFERENCES edicao_curso(id),
     nota FLOAT
 );

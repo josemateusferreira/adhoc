@@ -12,38 +12,38 @@
     <form action="/app/candidato/create" method="post">
         <div class="mb-3">
             <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" name="nome" required>
+            <input type="text" class="form-control" id="nome" name="nome" required value="{{ candidato.nome if candidato.nome is defined else '' }}">
         </div>
         <div class="mb-3">
             <label for="cpf" class="form-label">CPF</label>
-            <input type="text" class="form-control" id="cpf" name="cpf" required maxlength="14" placeholder="000.000.000-00">
+            <input type="text" class="form-control" id="cpf" name="cpf" required maxlength="14" placeholder="000.000.000-00" value="{{ candidato.cpf if candidato.cpf is defined else '' }}">
         </div>
         <div class="mb-3">
             <label for="data_nascimento" class="form-label">Data de Nascimento</label>
-            <input type="date" class="form-control" id="data_nascimento" name="data_nascimento">
+            <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ candidato.data_nascimento if candidato.data_nascimento is defined else '' }}">
         </div>
         <div class="mb-3">
             <label for="categoria" class="form-label">Categoria</label>
             <select class="form-select" id="categoria" name="categoria" required>
-                <option value="AC">Ampla Concorrência</option>
-                <option value="PPI_BR">PPI + Escola Pública (BR)</option>
-                <option value="PUBLICA_BR">Escola Pública (BR)</option>
-                <option value="PPI_PUBLICA">PPI + Escola Pública</option>
-                <option value="PUBLICA">Escola Pública</option>
-                <option value="DEFICIENTES">Pessoa com Deficiência</option>
+                <option value="AC" {% if candidato.categoria == 'AC' %}selected{% endif %}>Ampla Concorrência</option>
+                <option value="PPI_BR" {% if candidato.categoria == 'PPI_BR' %}selected{% endif %}>PPI + Escola Pública (BR)</option>
+                <option value="PUBLICA_BR" {% if candidato.categoria == 'PUBLICA_BR' %}selected{% endif %}>Escola Pública (BR)</option>
+                <option value="PPI_PUBLICA" {% if candidato.categoria == 'PPI_PUBLICA' %}selected{% endif %}>PPI + Escola Pública</option>
+                <option value="PUBLICA" {% if candidato.categoria == 'PUBLICA' %}selected{% endif %}>Escola Pública</option>
+                <option value="DEFICIENTES" {% if candidato.categoria == 'DEFICIENTES' %}selected{% endif %}>Pessoa com Deficiência</option>
             </select>
         </div>
         <div class="mb-3">
             <label for="curso_id" class="form-label">Curso</label>
             <select class="form-select" id="curso_id" name="curso_id" required>
                 {% for curso in cursos %}
-                    <option value="{{ curso.id }}">{{ curso.nome }}</option>
+                    <option value="{{ curso.id }}" {% if candidato.curso_id == curso.id %}selected{% endif %}>{{ curso.nome }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="mb-3">
             <label for="nota" class="form-label">Nota</label>
-            <input type="number" step="0.01" class="form-control" id="nota" name="nota">
+            <input type="number" step="0.01" class="form-control" id="nota" name="nota" value="{{ candidato.nota if candidato.nota is defined else '' }}">
         </div>
         <button type="submit" class="btn btn-primary">Inscrever</button>
     <a href="/app/candidato/index" class="btn btn-secondary ms-2">Voltar</a>

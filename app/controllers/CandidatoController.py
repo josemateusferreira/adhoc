@@ -1,4 +1,3 @@
-
 from controllers.Controller import Controller
 from models.Candidato import Candidato
 from models.Curso import Curso
@@ -17,17 +16,11 @@ class CandidatoController(Controller):
         cursos = Curso.all()
         self.data = template.render(candidato=candidato, cursos=cursos)
 
-    def view(self, id, origem=None):
+    def view(self, id):
         candidato = Candidato.find(id[0])
-        from urllib.parse import parse_qs
-        qs = parse_qs(self.environ.get('QUERY_STRING', ''))
-        if origem is None:
-            origem = qs.get('origem', ['candidato'])[0]
-        if origem not in ('candidato', 'edicao'):
-            origem = 'candidato'
         if candidato:
             template = self.env.get_template("view.html")
-            self.data = template.render(candidato=candidato, origem=origem)
+            self.data = template.render(candidato=candidato)
         else:
             self.notFound()
 
@@ -55,11 +48,29 @@ class CandidatoController(Controller):
         else:
             self.notFound()
 
-    def index(self, origem=None):
+    def index(self, *args, **kwargs):
         edicoes = Edicao.all()
         message = ""
         if 'flash' in self.session:
             message = self.session['flash']
             self.session['flash'] = ""
         template = self.env.get_template("index.html")
-        self.data = template.render(edicoes=edicoes, message=message, origem=origem)
+        self.data = template.render(edicoes=edicoes, message=message)
+
+    def edicao_detalhe(self, edicao_id=None):
+        from models.Edicao import Edicao, EdicaoCurso
+        from models.Candidato import Candidato
+        edicao = Edicao.find(edicao_id)
+        edicao_cursos = EdicaoCurso.where('edicao_id', edicao_id).get()
+        candidatos = []
+        for edicao_curso in edicao_cursos:
+            for candidato in Candidato.where('edicao_curso_id', edicao_curso.id).get():
+                curso = edicao_curso.curso
+                candidatos.append({
+                    'id': candidato.id,
+                    'nome': candidato.nome,
+                    'categoria': candidato.categoria,
+                    'curso_nome': curso.nome if curso else 'N/A'
+                })
+        template = self.env.get_template("edicao_detalhe.html")
+        self.data = template.render(edicao=edicao, candidatos=candidatos)

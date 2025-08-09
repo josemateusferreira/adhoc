@@ -46,12 +46,9 @@
         {% endfor %}
         </tbody>
     </table>
-        <a href="/app/convocacao/index?edicao_id={{ edicao.id }}&origem={{ origem }}" class="btn btn-primary mt-3">Lista de Convocação</a>
-        {% if origem == 'candidato' %}
-            <a href="/app/candidato/index?origem=candidato" class="btn btn-secondary">Voltar</a>
-        {% else %}
-            <a href="/app/edicao/index?origem=edicao" class="btn btn-secondary">Voltar</a>
-        {% endif %}
+
+
+    <a href="/app/edicao/index" class="btn btn-secondary">Voltar</a>
 
 </div>
 <!-- Bootstrap JS -->
