@@ -9,6 +9,11 @@
 <body>
 <div class="container mt-5">
     <h1 class="mb-4">Inscrever Novo Candidato</h1>
+    {% if error_message %}
+    <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+    </div>
+    {% endif %}
     <form action="/app/candidato/create" method="post">
         <div class="mb-3">
             <label for="nome" class="form-label">Nome</label>
@@ -16,7 +21,12 @@
         </div>
         <div class="mb-3">
             <label for="cpf" class="form-label">CPF</label>
+            {% if candidato.id is defined and candidato.id %}
+            <input type="text" class="form-control" id="cpf" name="cpf" value="{{ candidato.cpf }}" readonly>
+            <div class="form-text text-info">O CPF não pode ser alterado. Apenas visualização.</div>
+            {% else %}
             <input type="text" class="form-control" id="cpf" name="cpf" required maxlength="14" placeholder="000.000.000-00" value="{{ candidato.cpf if candidato.cpf is defined else '' }}">
+            {% endif %}
         </div>
         <div class="mb-3">
             <label for="data_nascimento" class="form-label">Data de Nascimento</label>
@@ -26,18 +36,18 @@
             <label for="categoria" class="form-label">Categoria</label>
             <select class="form-select" id="categoria" name="categoria" required>
                 <option value="AC" {% if candidato.categoria == 'AC' %}selected{% endif %}>Ampla Concorrência</option>
-                <option value="PPI_BR" {% if candidato.categoria == 'PPI_BR' %}selected{% endif %}>PPI + Escola Pública (BR)</option>
-                <option value="PUBLICA_BR" {% if candidato.categoria == 'PUBLICA_BR' %}selected{% endif %}>Escola Pública (BR)</option>
-                <option value="PPI_PUBLICA" {% if candidato.categoria == 'PPI_PUBLICA' %}selected{% endif %}>PPI + Escola Pública</option>
-                <option value="PUBLICA" {% if candidato.categoria == 'PUBLICA' %}selected{% endif %}>Escola Pública</option>
-                <option value="DEFICIENTES" {% if candidato.categoria == 'DEFICIENTES' %}selected{% endif %}>Pessoa com Deficiência</option>
+                <option value="PPI BR" {% if candidato.categoria == 'PPI BR' %}selected{% endif %}>PPI + Escola Pública (BR)</option>
+                <option value="Pública BR" {% if candidato.categoria == 'Pública BR' %}selected{% endif %}>Escola Pública (BR)</option>
+                <option value="PPI Pública" {% if candidato.categoria == 'PPI Pública' %}selected{% endif %}>PPI + Escola Pública</option>
+                <option value="Pública" {% if candidato.categoria == 'Pública' %}selected{% endif %}>Escola Pública</option>
+                <option value="Deficientes" {% if candidato.categoria == 'Deficientes' %}selected{% endif %}>Pessoa com Deficiência</option>
             </select>
         </div>
         <div class="mb-3">
-            <label for="curso_id" class="form-label">Curso</label>
-            <select class="form-select" id="curso_id" name="curso_id" required>
-                {% for curso in cursos %}
-                    <option value="{{ curso.id }}" {% if candidato.curso_id == curso.id %}selected{% endif %}>{{ curso.nome }}</option>
+            <label for="edicao_curso_id" class="form-label">Curso</label>
+            <select class="form-select" id="edicao_curso_id" name="edicao_curso_id" required>
+                {% for edicao_curso in edicao_cursos %}
+                    <option value="{{ edicao_curso.id }}" {% if candidato.edicao_curso_id == edicao_curso.id %}selected{% endif %}>{{ edicao_curso.curso.nome }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -45,8 +55,8 @@
             <label for="nota" class="form-label">Nota</label>
             <input type="number" step="0.01" class="form-control" id="nota" name="nota" value="{{ candidato.nota if candidato.nota is defined else '' }}">
         </div>
-        <button type="submit" class="btn btn-primary">Inscrever</button>
-    <a href="/app/candidato/index" class="btn btn-secondary ms-2">Voltar</a>
+        <button type="submit" class="btn btn-primary">{% if candidato.id is defined and candidato.id %}Salvar{% else %}Inscrever{% endif %}</button>
+        <a href="/app/candidato/index" class="btn btn-secondary ms-2">Voltar</a>
     </form>
 </div>
 </body>
