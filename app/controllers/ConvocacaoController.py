@@ -1,29 +1,71 @@
+import os
 from controllers.Controller import Controller
 from models.Candidato import Candidato
-from models.Curso import Curso
+from models.Edicao import Edicao, EdicaoCurso
 from jinja2 import Environment, FileSystemLoader
 from urllib.parse import parse_qs
+import sys
+sys.path.append('./app')
 
 
 class ConvocacaoController(Controller):
-    def index(self, edicao_id=None, origem=None):
-        template = self.env.get_template("index.html")
-        # Captura origem da query string se não vier por parâmetro
+    def lista(self, *args, **kwargs):
         qs = parse_qs(self.environ.get('QUERY_STRING', ''))
-        if origem is None:
-            origem = qs.get('origem', ['edicao'])[0]
-        if origem not in ('edicao', 'candidato'):
-            origem = 'edicao'
-        # Busca candidatos da edição
-        candidatos = []
-        if edicao_id:
-            # Busca todos os candidatos inscritos na edição
-            for candidato in Candidato.where('edicao_id', edicao_id).get():
-                curso = Curso.find(candidato.curso_id)
-                candidatos.append({
-                    'nome': candidato.nome,
-                    'categoria': candidato.categoria,
-                    'curso_nome': curso.nome if curso else 'N/A'
-                })
+        edicao_id = int(qs.get('edicao_id', [0])[
+                        0]) if 'edicao_id' in qs else None
+        edicoes = Edicao.all()
+        edicao_cursos = EdicaoCurso.where(
+            'edicao_id', edicao_id).get() if edicao_id else []
+        template = self.env.get_template("lista.html")
         self.data = template.render(
-            candidatos=candidatos, origem=origem, edicao_id=edicao_id)
+            edicoes=edicoes,
+            edicao_cursos=edicao_cursos,
+            edicao_id=edicao_id)
+
+    def resultado(self, *args, **kwargs):
+        qs = parse_qs(self.environ.get('QUERY_STRING', ''))
+        edicao_id = int(qs.get('edicao_id', [0])[
+                        0]) if 'edicao_id' in qs else None
+        edicao_curso_id = int(qs.get('edicao_curso_id', [0])[
+                              0]) if 'edicao_curso_id' in qs else None
+        multiplicador = int(qs.get('multiplicador', [1])[
+                            0]) if 'multiplicador' in qs else 1
+        edicoes = Edicao.all()
+        edicao_cursos = EdicaoCurso.where(
+            'edicao_id', edicao_id).get() if edicao_id else []
+        lista_convocacao = {}
+        curso_nome = None
+        edicao_nome = None
+        if edicao_curso_id:
+            ec = EdicaoCurso.find(edicao_curso_id)
+            if ec:
+                curso_nome = ec.curso.nome if ec.curso else None
+                edicao = Edicao.find(ec.edicao_id)
+                edicao_nome = f"{edicao.nome} ({edicao.ano}.{edicao.semestre})" if edicao else None
+                modalidades = {
+                    'AC': ec.vagas_ac,
+                    'PPI BR': ec.vagas_ppi_br,
+                    'Pública BR': ec.vagas_publica_br,
+                    'PPI Pública': ec.vagas_ppi_publica,
+                    'Pública': ec.vagas_publica,
+                    'Deficientes': ec.vagas_deficientes
+                }
+                for modalidade, vagas in modalidades.items():
+                    n_convocar = vagas * multiplicador
+                    candidatos = (Candidato.where('edicao_curso_id', edicao_curso_id)
+                                  .where('categoria', modalidade)
+                                  .order_by('nota', 'desc')
+                                  .limit(n_convocar)
+                                  .get())
+                    for idx, candidato in enumerate(candidatos, start=1):
+                        candidato.posicao_modalidade = idx
+                    lista_convocacao[modalidade] = candidatos
+        template = self.env.get_template("resultado.html")
+        self.data = template.render(
+            edicoes=edicoes,
+            edicao_cursos=edicao_cursos,
+            edicao_id=edicao_id,
+            edicao_curso_id=edicao_curso_id,
+            lista_convocacao=lista_convocacao,
+            curso_nome=curso_nome,
+            edicao_nome=edicao_nome)
