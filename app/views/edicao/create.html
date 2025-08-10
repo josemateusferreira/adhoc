@@ -59,27 +59,17 @@
         </div>
         <div class="form-group">
             <label>Nome do SISU (gerado automaticamente)
-                <input type="text" class="form-control" name="nome_edicao" id="nome_edicao" value="{{edicao.nome}}" readonly>
+                <input type="text" class="form-control" name="nome_edicao" id="nome_edicao" value="{{edicao.nome}}" readonly required>
             </label>
         </div>
-        <script>
-            function atualizarNomeSISU() {
-                var ano = document.getElementById('ano_edicao').value;
-                var semestre = document.getElementById('semestre_edicao').value;
-                document.getElementById('nome_edicao').value = ano + '.' + semestre;
-            }
-            document.getElementById('ano_edicao').addEventListener('change', atualizarNomeSISU);
-            document.getElementById('semestre_edicao').addEventListener('change', atualizarNomeSISU);
-            window.onload = atualizarNomeSISU;
-        </script>
         <div class="form-group">
             <label>Data Início
-                    <input type="date" class="form-control" name="data_inicio_edicao" value="{{edicao.data_inicio}}">
+                    <input type="date" class="form-control" name="data_inicio_edicao" value="{{edicao.data_inicio}}" required>
             </label>
         </div>
         <div class="form-group">
             <label>Data Fim
-                    <input type="date" class="form-control" name="data_fim_edicao" value="{{edicao.data_fim}}">
+                    <input type="date" class="form-control" name="data_fim_edicao" value="{{edicao.data_fim}}" required>
             </label>
         </div>
         <hr>

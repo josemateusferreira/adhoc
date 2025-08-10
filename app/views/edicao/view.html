@@ -10,11 +10,19 @@
 <body>
 <div class="container mt-5">
     <h1 class="mb-4">Detalhes da Edição</h1>
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">{{edicao.nome}}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Ano: {{edicao.ano}} | Semestre: {{edicao.semestre}}</h6>
-            <p class="card-text">Data Início: {{edicao.data_inicio}}<br>Data Fim: {{edicao.data_fim}}</p>
+            <h6 class="card-subtitle mb-2 text-muted">
+                Ano: {{ edicao.ano if edicao.ano is defined else edicao['ano'] }} | Semestre: {{ edicao.semestre if edicao.semestre is defined else edicao['semestre'] }}
+            </h6>
+            <p class="card-text">
+                Data Início: {{ edicao.data_inicio if edicao.data_inicio is defined else edicao['data_inicio'] }}<br>
+                Data Fim: {{ edicao.data_fim if edicao.data_fim is defined else edicao['data_fim'] }}
+            </p>
         </div>
     </div>
     <h2 class="mt-5">Cursos e Vagas</h2>

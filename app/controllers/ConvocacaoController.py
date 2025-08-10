@@ -1,3 +1,4 @@
+from categorias import CATEGORIAS
 import os
 from controllers.Controller import Controller
 from models.Candidato import Candidato
@@ -6,7 +7,6 @@ from jinja2 import Environment, FileSystemLoader
 from urllib.parse import parse_qs
 import sys
 sys.path.append('./app')
-from categorias import CATEGORIAS
 
 
 class ConvocacaoController(Controller):

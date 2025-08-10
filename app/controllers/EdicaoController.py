@@ -1,3 +1,4 @@
+from categorias import CATEGORIAS
 import os
 from controllers.Controller import Controller
 from models.Edicao import Edicao, EdicaoCurso
@@ -9,7 +10,6 @@ from urllib.parse import parse_qs
 sys.path.append('./app')
 
 
-from categorias import CATEGORIAS
 class EdicaoController(Controller):
     def delete(self, id=None):
         edicao = Edicao.where('id', id).first()
@@ -34,6 +34,10 @@ class EdicaoController(Controller):
     def view(self, id=None, origem=None):
         template = self.env.get_template("view.html")
         edicao = Edicao.find(id)
+        if not edicao:
+            self.data = template.render(error="Edição não encontrada.", edicao=None, edicao_cursos=[
+            ], origem=origem, candidatos=[])
+            return
         edicao_cursos = EdicaoCurso.where('edicao_id', id).get()
         from models.Candidato import Candidato
         from models.Curso import Curso
@@ -106,7 +110,8 @@ class EdicaoController(Controller):
                                 CATEGORIAS[2]: int(curso.get('vagas_publica_br') or 0),
                                 CATEGORIAS[3]: int(curso.get('vagas_ppi_publica') or 0),
                                 CATEGORIAS[4]: int(curso.get('vagas_publica') or 0),
-                                CATEGORIAS[5]: int(curso.get('vagas_deficientes') or 0)
+                                CATEGORIAS[5]: int(
+                                    curso.get('vagas_deficientes') or 0)
                             })
                             edicao_curso.save()
                     self.redirectPage(

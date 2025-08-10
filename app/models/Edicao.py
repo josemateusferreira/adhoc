@@ -9,11 +9,11 @@ class Edicao(Model):
                     'data_fim']  # Campos que podem ser preenchidos em massa
 
     def fill_from_form(self, data):
-        self.nome = data.get('nome_edicao')
-        self.ano = data.get('ano_edicao')
-        self.semestre = data.get('semestre_edicao')
-        self.data_inicio = data.get('data_inicio_edicao')
-        self.data_fim = data.get('data_fim_edicao')
+        self.nome = data.get('nome_edicao') or ''
+        self.ano = int(data.get('ano_edicao') or 0)
+        self.semestre = int(data.get('semestre_edicao') or 0)
+        self.data_inicio = data.get('data_inicio_edicao') or ''
+        self.data_fim = data.get('data_fim_edicao') or ''
         # Não preenche cursos aqui, pois são dados aninhados
 
 
