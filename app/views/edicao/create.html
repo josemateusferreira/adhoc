@@ -8,7 +8,30 @@
     <script>
         function toggleVagas(index) {
             var vagasDiv = document.getElementById('vagas-' + index);
-            vagasDiv.style.display = vagasDiv.style.display === 'none' ? 'block' : 'none';
+            var btn = document.getElementById('btn-toggle-' + index);
+            var ativo = document.getElementById('ativo-' + index);
+            if (vagasDiv.style.display === 'none' || vagasDiv.style.display === '') {
+                vagasDiv.style.display = 'block';
+                btn.innerText = '-';
+                ativo.value = '1';
+                var inputs = vagasDiv.querySelectorAll('input');
+                inputs.forEach(function(input) { input.disabled = false; });
+            } else {
+                vagasDiv.style.display = 'none';
+                btn.innerText = '+';
+                ativo.value = '0';
+                var inputs = vagasDiv.querySelectorAll('input');
+                inputs.forEach(function(input) { input.disabled = true; });
+            }
+        }
+        window.onload = function() {
+            // Por padrão, todos os cursos ficam ocultos/desabilitados
+            var total = {{ cursos|length | int }};
+            for (var i = 0; i < total; i++) {
+                var vagasDiv = document.getElementById('vagas-' + i);
+                var inputs = vagasDiv.querySelectorAll('input');
+                inputs.forEach(function(input) { input.disabled = true; });
+            }
         }
     </script>
 </head>
@@ -61,11 +84,13 @@
         </div>
         <hr>
         <h3>Cursos</h3>
+        <p class="text-info"><strong>Como funciona:</strong> Clique no botão <b>+</b> para adicionar um curso à edição e preencher as vagas. Clique no botão <b>-</b> para remover o curso da edição. Somente cursos marcados com <b>+</b> serão incluídos ao salvar.</p>
         {% for curso in cursos %}
         <div class="form-group border p-3 mb-3">
             <div class="d-flex align-items-center">
                 <strong>{{curso.nome}}</strong>
-                <button type="button" class="btn btn-info btn-sm ms-3" onclick="toggleVagas({{loop.index0}})">+</button>
+                <button type="button" class="btn btn-info btn-sm ms-3" id="btn-toggle-{{loop.index0}}" onclick="toggleVagas({{loop.index0}})">+</button>
+                <input type="hidden" id="ativo-{{loop.index0}}" name="cursos[{{loop.index0}}][ativo]" value="0">
             </div>
             <div id="vagas-{{loop.index0}}" style="display:none; margin-top:10px;">
                 {% set ec = (edicao_cursos | selectattr('curso_id', 'equalto', curso.id) | list | first) %}

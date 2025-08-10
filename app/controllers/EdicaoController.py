@@ -9,6 +9,7 @@ from urllib.parse import parse_qs
 sys.path.append('./app')
 
 
+from categorias import CATEGORIAS
 class EdicaoController(Controller):
     def delete(self, id=None):
         edicao = Edicao.where('id', id).first()
@@ -95,18 +96,19 @@ class EdicaoController(Controller):
                     if id:
                         EdicaoCurso.where('edicao_id', edicao.id).delete()
                     for curso in cursos_data.values():
-                        edicao_curso = EdicaoCurso()
-                        edicao_curso.fill_from_form({
-                            'edicao_id': edicao.id,
-                            'curso_id': curso.get('curso_id'),
-                            'vagas_ac': int(curso.get('vagas_ac') or 0),
-                            'vagas_ppi_br': int(curso.get('vagas_ppi_br') or 0),
-                            'vagas_publica_br': int(curso.get('vagas_publica_br') or 0),
-                            'vagas_ppi_publica': int(curso.get('vagas_ppi_publica') or 0),
-                            'vagas_publica': int(curso.get('vagas_publica') or 0),
-                            'vagas_deficientes': int(curso.get('vagas_deficientes') or 0)
-                        })
-                        edicao_curso.save()
+                        if str(curso.get('ativo', '0')) == '1':
+                            edicao_curso = EdicaoCurso()
+                            edicao_curso.fill_from_form({
+                                'edicao_id': edicao.id,
+                                'curso_id': curso.get('curso_id'),
+                                CATEGORIAS[0]: int(curso.get('vagas_ac') or 0),
+                                CATEGORIAS[1]: int(curso.get('vagas_ppi_br') or 0),
+                                CATEGORIAS[2]: int(curso.get('vagas_publica_br') or 0),
+                                CATEGORIAS[3]: int(curso.get('vagas_ppi_publica') or 0),
+                                CATEGORIAS[4]: int(curso.get('vagas_publica') or 0),
+                                CATEGORIAS[5]: int(curso.get('vagas_deficientes') or 0)
+                            })
+                            edicao_curso.save()
                     self.redirectPage(
                         'view', {'id': edicao.id, 'origem': 'edicao'})
 

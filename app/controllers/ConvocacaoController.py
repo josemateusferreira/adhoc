@@ -6,6 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from urllib.parse import parse_qs
 import sys
 sys.path.append('./app')
+from categorias import CATEGORIAS
 
 
 class ConvocacaoController(Controller):
@@ -43,12 +44,12 @@ class ConvocacaoController(Controller):
                 edicao = Edicao.find(ec.edicao_id)
                 edicao_nome = f"{edicao.nome} ({edicao.ano}.{edicao.semestre})" if edicao else None
                 modalidades = {
-                    'AC': ec.vagas_ac,
-                    'PPI BR': ec.vagas_ppi_br,
-                    'Pública BR': ec.vagas_publica_br,
-                    'PPI Pública': ec.vagas_ppi_publica,
-                    'Pública': ec.vagas_publica,
-                    'Deficientes': ec.vagas_deficientes
+                    CATEGORIAS[0]: ec.vagas_ac,
+                    CATEGORIAS[1]: ec.vagas_ppi_br,
+                    CATEGORIAS[2]: ec.vagas_publica_br,
+                    CATEGORIAS[3]: ec.vagas_ppi_publica,
+                    CATEGORIAS[4]: ec.vagas_publica,
+                    CATEGORIAS[5]: ec.vagas_deficientes
                 }
                 for modalidade, vagas in modalidades.items():
                     n_convocar = vagas * multiplicador
