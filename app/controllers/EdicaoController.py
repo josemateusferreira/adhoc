@@ -80,11 +80,6 @@ class EdicaoController(Controller):
             # Validação obrigatória
             if not nome_sisu or not ano or not semestre or not data_inicio or not data_fim:
                 error_msg = 'Preencha todos os campos obrigatórios: nome, ano, semestre, data de início e fim.'
-            elif not cursos_data or not all(
-                    all(vaga in curso and curso.get(vaga) is not None and curso.get(vaga) != '' for vaga in [
-                        'vagas_ac', 'vagas_ppi_br', 'vagas_publica_br', 'vagas_ppi_publica', 'vagas_publica', 'vagas_deficientes'])
-                    for curso in cursos_data.values()):
-                error_msg = 'Preencha todas as vagas para todos os cursos (coloque 0 se não houver vaga).'
             else:
                 # Verifica se já existe edição com esse nome (exceto a edição atual)
                 edicao_existente = Edicao.where('nome', nome_sisu)
@@ -104,12 +99,12 @@ class EdicaoController(Controller):
                         edicao_curso.fill_from_form({
                             'edicao_id': edicao.id,
                             'curso_id': curso.get('curso_id'),
-                            'vagas_ac': curso.get('vagas_ac', 0),
-                            'vagas_ppi_br': curso.get('vagas_ppi_br', 0),
-                            'vagas_publica_br': curso.get('vagas_publica_br', 0),
-                            'vagas_ppi_publica': curso.get('vagas_ppi_publica', 0),
-                            'vagas_publica': curso.get('vagas_publica', 0),
-                            'vagas_deficientes': curso.get('vagas_deficientes', 0)
+                            'vagas_ac': int(curso.get('vagas_ac') or 0),
+                            'vagas_ppi_br': int(curso.get('vagas_ppi_br') or 0),
+                            'vagas_publica_br': int(curso.get('vagas_publica_br') or 0),
+                            'vagas_ppi_publica': int(curso.get('vagas_ppi_publica') or 0),
+                            'vagas_publica': int(curso.get('vagas_publica') or 0),
+                            'vagas_deficientes': int(curso.get('vagas_deficientes') or 0)
                         })
                         edicao_curso.save()
                     self.redirectPage(
